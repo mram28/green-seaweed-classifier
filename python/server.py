@@ -106,6 +106,10 @@ def home():
 def health():
     return {"status": "ok", "model": str(MODEL_PATH)}
 
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
+
 @app.post("/api/predict")
 async def predict(image: UploadFile = File(...)):
     saved = None
@@ -137,3 +141,4 @@ async def predict_top5(image: UploadFile = File(...)):
                 saved.unlink()
             except Exception:
                 pass
+
