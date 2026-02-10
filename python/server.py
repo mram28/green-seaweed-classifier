@@ -8,6 +8,10 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from ultralytics import YOLO
 from PIL import Image
 
+import time
+import threading
+
+
 
 # =========================
 # Paths (your structure)
@@ -144,4 +148,29 @@ async def predict_top5(image: UploadFile = File(...)):
             except Exception:
                 pass
 
+# =========================
+# Background Temp Cleaner
+# =========================
+CLEAN_INTERVAL = 1800  # 30 minutes (in seconds)
+FILE_MAX_AGE = 1800    # delete files older than 30 minutes
+
+def clean_temp_folder():
+    while True:
+        now = time.time()
+        try:
+            for file in TEMP_DIR.glob("*"):
+                if file.is_file():
+                    file_age = now - file.stat().st_mtime
+                    if file_age > FILE_MAX_AGE:
+                        file.unlink()
+                        print(f"Deleted old temp file: {file.name}")
+        except Exception as e:
+            print("Temp cleanup error:", e)
+
+        time.sleep(CLEAN_INTERVAL)
+
+@app.on_event("startup")
+def start_cleaner():
+    thread = threading.Thread(target=clean_temp_folder, daemon=True)
+    thread.start()
 
