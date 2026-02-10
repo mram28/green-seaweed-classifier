@@ -33,7 +33,7 @@ app = FastAPI(title="Seaweed Classifier API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],   # dev only; restrict later
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -143,4 +143,5 @@ async def predict_top5(image: UploadFile = File(...)):
                 saved.unlink()
             except Exception:
                 pass
+
 
