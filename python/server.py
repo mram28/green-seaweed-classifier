@@ -8,6 +8,9 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from ultralytics import YOLO
 from PIL import Image
 
+from fastapi import Request
+from fastapi.responses import HTMLResponse
+
 # =========================
 # Paths (your structure)
 # =========================
@@ -102,13 +105,14 @@ def home():
     </ul>
     """
 
-@app.get("/api/health")
-def health():
-    return {"status": "ok", "model": str(MODEL_PATH)}
+# Render sometimes pings with HEAD /
+@app.head("/")
+def home_head():
+    return HTMLResponse("")
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "model": str(MODEL_PATH)}
 
 @app.post("/api/predict")
 async def predict(image: UploadFile = File(...)):
@@ -141,4 +145,3 @@ async def predict_top5(image: UploadFile = File(...)):
                 saved.unlink()
             except Exception:
                 pass
-
