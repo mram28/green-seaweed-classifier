@@ -8,8 +8,6 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from ultralytics import YOLO
 from PIL import Image
 
-from fastapi import Request
-from fastapi.responses import HTMLResponse
 
 # =========================
 # Paths (your structure)
@@ -145,3 +143,4 @@ async def predict_top5(image: UploadFile = File(...)):
                 saved.unlink()
             except Exception:
                 pass
+
